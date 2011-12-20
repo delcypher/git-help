@@ -1,0 +1,7 @@
+*~
+*.swp
+*.backup
+*.out
+*.log
+*.aux
+git-help.pdf
