@@ -180,7 +180,7 @@ To /vol/project/2011/530/g1153011/repo-name
 $ git clone /vol/project/2011/530/some-group/repo-name/
 			\end{lstlisting}
 
-			\item If you you want to acess from outside the DoC (e.g. your home computer) run in the directory you want your copy of the repository to be. Note \texttt{username} is your username and \texttt{/vol/project/2011/530/some-group/repo-name/} is the path to your repository.
+			\item If you you want to access from outside the DoC (e.g. your home computer) run in the directory you want your copy of the repository to be. Note \texttt{username} is your username and \texttt{/vol/project/2011/530/some-group/repo-name/} is the path to your repository.
 			\begin{lstlisting}
 $ git clone username@shell1.doc.ic.ac.uk:/vol/project/2011/530/some-group/repo-name/
 			\end{lstlisting}
@@ -203,6 +203,43 @@ $ man git <command>
 	\item Google. If you have a question about how to do something it \texttt{git} chances are someone has already asked about it.
 
 \end{itemize}
+
+\section{E-mails on push}
+Cristian Cadar recommened having e-mails sent to the group everytime someone did a commit for \texttt{svn}. We can do something similar for \texttt{git} except that it doesn't make sense for e-mails to be sent when you do a commit because that commit is local to your repository so no one else can see it apart from you. Instead we setup your central repository (assuming you have one) to send out an e-mail everytime somone pushes into it. How this done depends on your setup please choose the relevant sub section for you.
+
+\subsection{Private centralised repository}
+We will add a ``post-receive hook'' to your central repository. This is just a bash shell script that is executed everytime someone pushes into that repository. It relies on the \texttt{sendmail} program to send mail as long as that is configured correct then everything should work. On the lab machines this already configured correctly.
+
+First \texttt{cd} into your central repository folder, you should see the following folder structure.
+\begin{lstlisting}
+$ cd /vol/project/2011/530/some-group/repo-name/
+$ ls -l
+total 36
+drwxr-xr-x  2 dan users 4096 Jan 12 09:42 branches
+-rw-r--r--  1 dan users  119 Jan 12 09:42 config
+-rw-r--r--  1 dan users   73 Jan 12 09:42 description
+-rw-r--r--  1 dan users   23 Jan 12 09:42 HEAD
+drwxr-xr-x  2 dan users 4096 Jan 12 09:42 hooks
+drwxr-xr-x  2 dan users 4096 Jan 12 09:42 info
+drwxr-xr-x 13 dan users 4096 Jan 12 09:42 objects
+-rw-r--r--  1 dan users   85 Jan 12 09:42 packed-refs
+drwxr-xr-x  4 dan users 4096 Jan 12 09:42 refs
+\end{lstlisting}
+If you don't see this directory structure then STOP, you're in the wrong directory.
+
+Now run the following
+\begin{lstlisting}
+$ cp /usr/share/doc/git/contrib/hooks/post-receive-email hooks/post-receive
+$ chmod a+x hooks/post-receive
+$ git config --local hooks.mailinglist "yourgroupemail@doc.ic.ac.uk"
+$ git config --local hooks.emailprefix "[SUBJECT PREFIX]"
+$ echo "Project Name" > description
+\end{lstlisting}
+Where \texttt{yourgroupemail@doc.ic.ac.uk} is the e-mail address for messages to be sent to, \texttt{[SUBJECT PREFIX]} is the subject prefix to put on the e-mail messages (useful for filtering) and \texttt{Project Name} is the name of your project (try to keep it short as it will appear in the e-mails.
+
+If you look at the file \texttt{hooks/post-receive} it describes some of its other options. If you want to change some of the static text in the e-mail take a look at the \texttt{generate\_email\_header()} and \texttt{generate\_email\_footer()} functions.
+
+\subsection{Public centralised repository on GitHub}
 
 \section{A few tips}
 \begin{itemize}
