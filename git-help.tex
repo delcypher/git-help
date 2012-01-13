@@ -7,6 +7,7 @@
 \usepackage[pdftex,colorlinks]{hyperref}
 \usepackage{graphicx}
 \usepackage{subfig}
+\graphicspath{{img/}}
 
 \usepackage{listings}
 
@@ -32,6 +33,15 @@
 \danspagestyle
 }
 
+\newcommand{\screenshot}[3]
+{
+\begin{figure}[!htbp]
+  \centering
+  \includegraphics[scale=0.4]{#1}
+   \caption{#2}
+  \label{#3}
+\end{figure}
+}
 
 %opening
 \title{Getting Started with \texttt{git}}
@@ -208,9 +218,9 @@ $ man git <command>
 Cristian Cadar recommened having e-mails sent to the group everytime someone did a commit for \texttt{svn}. We can do something similar for \texttt{git} except that it doesn't make sense for e-mails to be sent when you do a commit because that commit is local to your repository so no one else can see it apart from you. Instead we setup your central repository (assuming you have one) to send out an e-mail everytime somone pushes into it. How this done depends on your setup please choose the relevant sub section for you.
 
 \subsection{Private centralised repository}
-We will add a ``post-receive hook'' to your central repository. This is just a bash shell script that is executed everytime someone pushes into that repository. It relies on the \texttt{sendmail} program to send mail as long as that is configured correct then everything should work. On the lab machines this already configured correctly.
+We will add a ``post-receive hook'' to your central repository. This is just a bash shell script that is executed (on the machine that the remote repository lives on) every time someone pushes into that repository. It relies on the \texttt{sendmail} program to send mail so as long as that is configured correct then everything should work. On the lab machines this already configured correctly so it should make setting this up straight forward.
 
-First \texttt{cd} into your central repository folder, you should see the following folder structure.
+First \texttt{cd} into your central repository folder, you should see the following folder structure (ignore the different user, group, filesizes and last modified date).
 \begin{lstlisting}
 $ cd /vol/project/2011/530/some-group/repo-name/
 $ ls -l
@@ -240,7 +250,26 @@ Where \texttt{yourgroupemail@doc.ic.ac.uk} is the e-mail address for messages to
 If you look at the file \texttt{hooks/post-receive} it describes some of its other options. If you want to change some of the static text in the e-mail take a look at the \texttt{generate\_email\_header()} and \texttt{generate\_email\_footer()} functions.
 
 \subsection{Public centralised repository on GitHub}
+GitHub provides ``service hooks'' that allows GitHub to be tied into other web services. One such hook is the ``Email'' hook. Follow the following steps to have e-mails sent to an e-mail address when someone pushes to your project.
 
+\begin{enumerate}
+	\item Login to your GitHub account and go to you repository homepage.
+	\item Click on the ``Admin'' button. See figure \ref{fig:screen1}.
+	\item Click ``Service Hooks'' on the left-hand side. See figure \ref{fig:screen2}.
+	\item Click ``Email''. See figure \ref{fig:screen3}.
+	\item In the ``Address'' box type your group's e-mail address and tick the ``Active'' checkbox. See figure \ref{fig:screen4}.
+	\item Click the ``Update Settings'' button. See figure \ref{fig:screen4}.
+	\item There should now be a green dot next to the ``Email'' hook. See figure \ref{fig:screen5}
+
+You're done! You should now get e-mails sent to your group address everytime someone pushes to your repository or creates/deletes a branch.
+\end{enumerate}
+\screenshot{gh1.png}{Project Homepage}{fig:screen1}
+\screenshot{gh2.png}{Project Admin page}{fig:screen2}
+\screenshot{gh3.png}{Project Admin - Service Hooks. Arrow points to the e-mail hook. Note that your screen probably won't have a read dot next to it}{fig:screen3}
+\screenshot{gh4.png}{Project Admin - Email hook}{fig:screen4}
+\screenshot{gh5.png}{Project Admin - Service Hooks. Showing E-mail hook is active}{fig:screen5}
+
+\pagebreak[4]
 \section{A few tips}
 \begin{itemize}
 	\item This isn't a \texttt{git} tip but it's useful. You might find it hard to remember the path to your group folder (I know I do). To make life easier make a symbolic link to it in your home directory.
